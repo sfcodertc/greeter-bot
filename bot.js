@@ -17,7 +17,35 @@ bot.on('ready', function(evt) {
 	logger.info('Logged in as: ')
 	logger.info(bot.username + ' - (' + bot.id + ')');
 })
-bot.on('message', function (user, userID, channelID, message, evt) {
+bot.on('message', function (user, userID, channelID, message, event) {
+	var caps = 0;
+
+	var letters = message.split("");
+
+	for (var i = 0; i < letters.length; i++) {
+			if (letters[i].toUpperCase() == letters[i] && letters[i].toLowerCase() != letters[i].toUpperCase()) {
+				caps ++;
+			}
+	}
+
+	if (caps >= letters.length * 0.35) {
+		bot.deleteMessage({
+    		channelID: channelID,
+    		messageID: event.d.id
+		});
+		bot.sendMessage({
+			to: userID,
+			message: "Hey! You're using too many caps!!"
+		})
+	}
+
+	if (message == "Hi everybody!") {
+		bot.sendMessage({
+			to: channelID,
+			messageID: "Hello!"
+		})
+	}
+
 	if (message.substring(0, 1) == "!") {
 		var args = message.substring(1).split(' ');
 		var cmd = args[0];
@@ -37,6 +65,14 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 					message: "Bye!"
 				})
 				break;
+
+			case 'say':
+				var botMessage = message.substring(4);
+
+				bot.sendMessage({
+					to: channelID,
+					message: botMessage
+				})
 		}
 	}
 })
